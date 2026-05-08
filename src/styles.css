@@ -1,0 +1,150 @@
+@import "tailwindcss";
+@import "tw-animate-css";
+
+@custom-variant dark (&:is(.dark *));
+
+/* Grafana-inspired dark theme */
+:root {
+  --background: oklch(0.16 0.012 250);
+  --foreground: oklch(0.92 0.005 250);
+
+  --card: oklch(0.20 0.012 250);
+  --card-foreground: oklch(0.92 0.005 250);
+
+  --popover: oklch(0.20 0.012 250);
+  --popover-foreground: oklch(0.92 0.005 250);
+
+  --primary: oklch(0.78 0.16 200);   /* cyan */
+  --primary-foreground: oklch(0.15 0.012 250);
+
+  --secondary: oklch(0.28 0.018 250);
+  --secondary-foreground: oklch(0.92 0.005 250);
+
+  --muted: oklch(0.24 0.012 250);
+  --muted-foreground: oklch(0.65 0.012 250);
+
+  --accent: oklch(0.30 0.018 250);
+  --accent-foreground: oklch(0.92 0.005 250);
+
+  --destructive: oklch(0.65 0.20 25);
+  --destructive-foreground: oklch(0.95 0.005 250);
+
+  --border: oklch(0.30 0.014 250);
+  --input: oklch(0.26 0.014 250);
+  --ring: oklch(0.78 0.16 200);
+
+  /* chart palette: cyan / orange / green / yellow / magenta / blue */
+  --chart-1: oklch(0.78 0.16 200);
+  --chart-2: oklch(0.74 0.18 50);
+  --chart-3: oklch(0.78 0.16 145);
+  --chart-4: oklch(0.85 0.16 95);
+  --chart-5: oklch(0.70 0.20 320);
+  --chart-6: oklch(0.70 0.18 260);
+
+  --radius: 0.375rem;
+
+  --panel-bg: oklch(0.20 0.012 250);
+  --panel-border: oklch(0.30 0.014 250);
+  --panel-header: oklch(0.65 0.012 250);
+  --grid: oklch(0.28 0.012 250);
+  --pos: oklch(0.78 0.16 145);
+  --neg: oklch(0.65 0.20 25);
+}
+
+@theme inline {
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --color-card: var(--card);
+  --color-card-foreground: var(--card-foreground);
+  --color-popover: var(--popover);
+  --color-popover-foreground: var(--popover-foreground);
+  --color-primary: var(--primary);
+  --color-primary-foreground: var(--primary-foreground);
+  --color-secondary: var(--secondary);
+  --color-secondary-foreground: var(--secondary-foreground);
+  --color-muted: var(--muted);
+  --color-muted-foreground: var(--muted-foreground);
+  --color-accent: var(--accent);
+  --color-accent-foreground: var(--accent-foreground);
+  --color-destructive: var(--destructive);
+  --color-destructive-foreground: var(--destructive-foreground);
+  --color-border: var(--border);
+  --color-input: var(--input);
+  --color-ring: var(--ring);
+  --color-chart-1: var(--chart-1);
+  --color-chart-2: var(--chart-2);
+  --color-chart-3: var(--chart-3);
+  --color-chart-4: var(--chart-4);
+  --color-chart-5: var(--chart-5);
+  --color-chart-6: var(--chart-6);
+  --color-panel: var(--panel-bg);
+  --color-panel-border: var(--panel-border);
+  --color-panel-header: var(--panel-header);
+  --color-grid: var(--grid);
+  --color-pos: var(--pos);
+  --color-neg: var(--neg);
+  --radius-sm: calc(var(--radius) - 2px);
+  --radius-md: var(--radius);
+  --radius-lg: calc(var(--radius) + 2px);
+  --font-sans: ui-sans-serif, system-ui, "Inter", "Roboto", -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+  --font-mono: "JetBrains Mono", ui-monospace, SFMono-Regular, "SF Mono", Menlo, Monaco, Consolas, monospace;
+}
+
+* {
+  border-color: var(--color-border);
+}
+
+html, body, #root {
+  height: 100%;
+}
+
+body {
+  background: var(--color-background);
+  color: var(--color-foreground);
+  font-family: var(--font-sans);
+  font-feature-settings: "cv11", "ss01", "ss03";
+  -webkit-font-smoothing: antialiased;
+}
+
+/* Numerics in mono */
+.tabular-nums {
+  font-variant-numeric: tabular-nums;
+}
+
+/* Subtle scrollbars */
+::-webkit-scrollbar { width: 10px; height: 10px; }
+::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-thumb { background: var(--color-panel-border); border-radius: 6px; }
+::-webkit-scrollbar-thumb:hover { background: var(--color-muted-foreground); }
+
+/* Recharts tooltip - dark themed */
+.recharts-default-tooltip {
+  background: var(--color-card) !important;
+  border: 1px solid var(--color-panel-border) !important;
+  border-radius: var(--radius-md) !important;
+  font-size: 12px !important;
+}
+.recharts-tooltip-label {
+  color: var(--color-muted-foreground) !important;
+  font-size: 11px !important;
+}
+.recharts-tooltip-item {
+  color: var(--color-foreground) !important;
+}
+.recharts-cartesian-axis-tick text {
+  fill: var(--color-muted-foreground) !important;
+  font-size: 11px;
+  font-family: var(--font-mono);
+}
+.recharts-cartesian-grid-horizontal line,
+.recharts-cartesian-grid-vertical line {
+  stroke: var(--color-grid) !important;
+  stroke-dasharray: 2 4;
+}
+.recharts-legend-item-text {
+  color: var(--color-muted-foreground) !important;
+  font-size: 11px !important;
+}
+.recharts-reference-line line {
+  stroke-dasharray: 4 4 !important;
+}

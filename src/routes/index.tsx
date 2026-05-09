@@ -150,8 +150,8 @@ function Home() {
     <div className="flex min-h-screen bg-background text-foreground">
       <Sidebar />
       <div className="flex min-w-0 flex-1 flex-col">
-        <header className="sticky top-0 z-10 flex h-12 shrink-0 items-center justify-between gap-3 border-b border-panel-border bg-panel/85 px-3 backdrop-blur">
-          <div className="flex min-w-0 items-center gap-3">
+        <header className="sticky top-0 z-10 flex shrink-0 flex-wrap items-center justify-between gap-x-3 gap-y-2 border-b border-panel-border bg-panel/85 px-3 py-2 backdrop-blur lg:h-12 lg:flex-nowrap lg:py-0">
+          <div className="flex min-w-0 flex-1 items-center gap-3">
             <div className="min-w-0">
               <div className="text-sm font-semibold tracking-tight">Mortgage Lab</div>
               <div className="text-[10px] uppercase tracking-wider text-muted-foreground">
@@ -206,7 +206,7 @@ function Home() {
                 value={String(maxYear)}
                 onValueChange={(v) => setMaxYear(Number(v))}
               >
-                <SelectTrigger className="h-6 w-24 border-0 bg-transparent px-1 text-xs shadow-none focus-visible:ring-0">
+                <SelectTrigger className="h-6 w-20 border-0 bg-transparent px-1 text-xs shadow-none focus-visible:ring-0 sm:w-24">
                   <SelectValue />
                 </SelectTrigger>
                 <SelectContent>
@@ -219,15 +219,50 @@ function Home() {
               </Select>
             </div>
             <Button variant="secondary" size="sm" onClick={reset} title="Reset">
-              <RotateCcw className="h-3 w-3" /> reset
+              <RotateCcw className="h-3 w-3" />
+              <span className="hidden sm:inline">reset</span>
             </Button>
-            <Button variant="default" size="sm" onClick={addScenario}>
-              <Plus className="h-3 w-3" /> scenario
+            <Button variant="default" size="sm" onClick={addScenario} title="Add scenario">
+              <Plus className="h-3 w-3" />
+              <span className="hidden sm:inline">scenario</span>
             </Button>
+          </div>
+          <div className="flex w-full items-center gap-1.5 rounded-md border border-panel-border bg-input/40 px-2 py-1 lg:hidden">
+            <Target className="h-3 w-3 shrink-0 text-primary" />
+            <span className="shrink-0 text-[10px] uppercase tracking-wider text-muted-foreground">
+              focus
+            </span>
+            <Select value={focusedId} onValueChange={setFocusedId}>
+              <SelectTrigger className="h-6 min-w-0 flex-1 border-0 bg-transparent px-1 text-xs shadow-none focus-visible:ring-0">
+                <SelectValue />
+              </SelectTrigger>
+              <SelectContent>
+                {scenarios.map((s) => (
+                  <SelectItem key={s.id} value={s.id}>
+                    {s.name}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+            <span className="shrink-0 text-[10px] uppercase tracking-wider text-muted-foreground">
+              vs
+            </span>
+            <Select value={baselineId} onValueChange={setBaselineId}>
+              <SelectTrigger className="h-6 min-w-0 flex-1 border-0 bg-transparent px-1 text-xs shadow-none focus-visible:ring-0">
+                <SelectValue />
+              </SelectTrigger>
+              <SelectContent>
+                {scenarios.map((s) => (
+                  <SelectItem key={s.id} value={s.id}>
+                    {s.name}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
           </div>
         </header>
 
-        <main className="flex-1 space-y-3 p-3">
+        <main className="flex-1 space-y-3 p-2 sm:p-3">
           <div className="grid gap-3 lg:grid-cols-2">
             <Panel
               title="Home Value vs Total Paid"
@@ -235,7 +270,7 @@ function Home() {
             >
               <HomeValueVsPaidChart
                 results={visibleResults}
-                height={280}
+                height={260}
                 maxYear={effectiveMax}
               />
             </Panel>
@@ -246,7 +281,7 @@ function Home() {
               accent={breakdown.inputs.color}
               action={
                 <Select value={breakdownId} onValueChange={setBreakdownId}>
-                  <SelectTrigger className="h-6 w-40 px-2 text-[11px]">
+                  <SelectTrigger className="h-6 w-32 px-2 text-[11px] sm:w-40">
                     <SelectValue />
                   </SelectTrigger>
                   <SelectContent>
@@ -261,13 +296,13 @@ function Home() {
             >
               <PaymentBreakdownChart
                 result={breakdown}
-                height={280}
+                height={260}
                 maxYear={effectiveMax}
               />
             </Panel>
           </div>
 
-          <div className="grid grid-cols-2 gap-3 lg:grid-cols-4">
+          <div className="grid grid-cols-2 gap-2 sm:gap-3 lg:grid-cols-4">
             <Panel
               accent={focused.inputs.color}
               title={`Monthly payment · ${focused.inputs.name}`}

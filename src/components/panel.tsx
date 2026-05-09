@@ -36,8 +36,8 @@ export function Panel({
         />
       )}
       {(title || action) && (
-        <div className="flex items-center justify-between border-b border-panel-border px-3 py-1.5">
-          <div className="flex items-baseline gap-2 min-w-0">
+        <div className="flex flex-wrap items-center justify-between gap-x-2 gap-y-1 border-b border-panel-border px-3 py-1.5">
+          <div className="flex min-w-0 flex-1 flex-wrap items-baseline gap-x-2 gap-y-0.5">
             {title && (
               <div className="truncate text-[10px] font-semibold uppercase tracking-[0.12em] text-panel-header">
                 {title}
@@ -47,7 +47,7 @@ export function Panel({
               <div className="truncate text-[10px] text-muted-foreground">{description}</div>
             )}
           </div>
-          {action && <div className="flex items-center gap-1.5">{action}</div>}
+          {action && <div className="flex shrink-0 items-center gap-1.5">{action}</div>}
         </div>
       )}
       <div className={cn(noPadding ? '' : 'p-3', bodyClassName)}>{children}</div>

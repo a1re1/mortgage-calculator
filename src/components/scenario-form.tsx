@@ -43,15 +43,15 @@ export function ScenarioForm({ scenario, onChange, onRemove, removable }: Scenar
     <Panel
       accent={scenario.color}
       title={
-        <div className="flex items-center gap-2">
+        <div className="flex min-w-0 items-center gap-2">
           <span
-            className="inline-block h-2 w-2 rounded-full"
+            className="inline-block h-2 w-2 shrink-0 rounded-full"
             style={{ background: scenario.color }}
           />
           <Input
             value={scenario.name}
             onChange={(e) => update('name', e.target.value)}
-            className="h-6 w-44 px-1.5 text-[11px] font-semibold uppercase tracking-wider"
+            className="h-6 w-32 min-w-0 px-1.5 text-[11px] font-semibold uppercase tracking-wider sm:w-44"
           />
         </div>
       }
@@ -279,9 +279,9 @@ function ExtraPaymentsEditor({
           {items.map((it, i) => (
             <div
               key={it.id}
-              className="grid grid-cols-12 items-end gap-2 rounded-md border border-border/60 bg-input/40 p-2"
+              className="grid grid-cols-2 items-end gap-2 rounded-md border border-border/60 bg-input/40 p-2 md:grid-cols-12"
             >
-              <div className="col-span-3">
+              <div className="md:col-span-3">
                 <NumberField
                   label={`#${i + 1} Month`}
                   value={it.month}
@@ -291,7 +291,7 @@ function ExtraPaymentsEditor({
                   hint={`yr ${(it.month / 12).toFixed(1)}`}
                 />
               </div>
-              <div className="col-span-4">
+              <div className="md:col-span-4">
                 <NumberField
                   label="Amount"
                   value={it.amount}
@@ -301,7 +301,7 @@ function ExtraPaymentsEditor({
                   prefix="$"
                 />
               </div>
-              <div className="col-span-4 flex items-end gap-2 pb-0.5">
+              <div className="col-span-2 flex items-end gap-2 pb-0.5 md:col-span-4">
                 <div className="flex flex-col gap-1">
                   <Label className="flex items-center gap-1">
                     <Repeat2 className="h-2.5 w-2.5" /> Recast
@@ -317,7 +317,7 @@ function ExtraPaymentsEditor({
                     : 'Pure principal reduction — keeps monthly payment, shortens loan.'}
                 </span>
               </div>
-              <div className="col-span-1 flex justify-end">
+              <div className="col-span-2 flex justify-end md:col-span-1">
                 <Button
                   variant="ghost"
                   size="icon"
@@ -386,9 +386,9 @@ function RefinanceEditor({
           {items.map((it, i) => (
             <div
               key={it.id}
-              className="grid grid-cols-12 items-end gap-2 rounded-md border border-border/60 bg-input/40 p-2"
+              className="grid grid-cols-2 items-end gap-2 rounded-md border border-border/60 bg-input/40 p-2 md:grid-cols-12"
             >
-              <div className="col-span-2">
+              <div className="md:col-span-2">
                 <NumberField
                   label={`#${i + 1} Month`}
                   value={it.month}
@@ -398,7 +398,7 @@ function RefinanceEditor({
                   hint={`yr ${(it.month / 12).toFixed(1)}`}
                 />
               </div>
-              <div className="col-span-2">
+              <div className="md:col-span-2">
                 <NumberField
                   label="New rate"
                   value={it.newRate}
@@ -409,7 +409,7 @@ function RefinanceEditor({
                   suffix="%"
                 />
               </div>
-              <div className="col-span-2">
+              <div className="md:col-span-2">
                 <div className="flex flex-col gap-1">
                   <Label>New term</Label>
                   <Select
@@ -429,7 +429,7 @@ function RefinanceEditor({
                   </Select>
                 </div>
               </div>
-              <div className="col-span-2">
+              <div className="md:col-span-2">
                 <NumberField
                   label="Closing"
                   value={it.closingCosts}
@@ -439,7 +439,7 @@ function RefinanceEditor({
                   prefix="$"
                 />
               </div>
-              <div className="col-span-3 flex items-end gap-2 pb-0.5">
+              <div className="col-span-2 flex items-end gap-2 pb-0.5 md:col-span-3">
                 <div className="flex flex-col gap-1">
                   <Label>Roll into loan</Label>
                   <Switch
@@ -453,7 +453,7 @@ function RefinanceEditor({
                     : 'Closing costs paid out of pocket.'}
                 </span>
               </div>
-              <div className={cn('col-span-1 flex justify-end')}>
+              <div className={cn('col-span-2 flex justify-end md:col-span-1')}>
                 <Button
                   variant="ghost"
                   size="icon"

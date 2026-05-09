@@ -16,11 +16,13 @@ import { MultiLineChart } from '~/components/charts/multi-line'
 import { PaymentBreakdownChart } from '~/components/charts/payment-breakdown'
 import { ScenarioWaterfall } from '~/components/charts/scenario-waterfall'
 import { COLORS } from '~/components/charts/shared'
+import { NumberField } from '~/components/field'
 import { Panel } from '~/components/panel'
 import { ScenarioForm } from '~/components/scenario-form'
 import { Sidebar } from '~/components/sidebar'
 import { SliderField } from '~/components/slider-field'
 import { Button } from '~/components/ui/button'
+import { Label } from '~/components/ui/label'
 import {
   Select,
   SelectContent,
@@ -41,28 +43,16 @@ export const Route = createFileRoute('/')({
   component: Home,
 })
 
-// Two scenarios out of the box:
-// 1. Chase preapproval (May 5 2026, ref MAX9058061) — max stretch at $1.5M,
-//    30yr fixed @ 5.625% with 2.15 points. Modeled as base 6.1625% reduced
-//    0.5375% by 2.15 points (default 0.25%/pt), landing on Chase's 5.625%
-//    effective rate. Point cost ≈ $25,800.
-// 2. 118 Pearl St #2, Cambridge — actual target at $1,294,000. Same Chase
-//    loan terms applied. Real listing numbers: HOA $461/mo (water, sewer,
-//    master ins, snow, reserves), property tax $4,179/yr → 0.32% of price,
-//    HO-6 personal policy ~$500/yr (master is in HOA), 0.6% maintenance
-//    (1874 build, duplex condo, exterior covered by HOA).
-const initialPresets = (): ScenarioInputs[] => [
+// 118 Pearl St #2, Cambridge — actual target at $1,294,000.
+// Real listing numbers: HOA $461/mo (water, sewer, master ins, snow, reserves),
+// property tax $4,179/yr → 0.32% of price, HO-6 personal policy ~$500/yr
+// (master coverage is in HOA), 0.6% maintenance (1874 build, exterior covered).
+// Loan terms from Chase preapproval (May 5 2026): 30yr fixed @ 5.625% with
+// 2.15 points. Modeled as base 6.1625% reduced 0.5375% by 2.15 points (default
+// 0.25%/pt), landing on Chase's 5.625% effective rate. Point cost ≈ $20,704.
+// Comparison scenario flips points off so the buydown decision is visible.
+const pearlStreet = (overrides: Partial<ScenarioInputs> = {}) =>
   defaultScenario({
-    name: 'Chase preapproval · $1.5M',
-    color: COLORS[0]!,
-    homePrice: 1_500_000,
-    loanTermYears: 30,
-    interestRate: 6.1625,
-    points: 2.15,
-  }),
-  defaultScenario({
-    name: '118 Pearl St · $1.294M',
-    color: COLORS[1]!,
     homePrice: 1_294_000,
     loanTermYears: 30,
     interestRate: 6.1625,
@@ -71,6 +61,18 @@ const initialPresets = (): ScenarioInputs[] => [
     homeInsuranceAnnual: 500,
     hoaMonthly: 461,
     maintenancePctAnnual: 0.6,
+    ...overrides,
+  })
+
+const initialPresets = (): ScenarioInputs[] => [
+  pearlStreet({
+    name: '118 Pearl · 5.625% · 2.15pt',
+    color: COLORS[0]!,
+  }),
+  pearlStreet({
+    name: '118 Pearl · no points · 6.16%',
+    color: COLORS[1]!,
+    points: 0,
   }),
 ]
 
@@ -280,8 +282,8 @@ function Home() {
           </div>
         </header>
 
-        <main className="flex-1 space-y-3 p-2 sm:p-3">
-          <div className="grid gap-3 lg:grid-cols-2">
+        <main className="flex flex-1 flex-col gap-3 p-2 sm:p-3">
+          <div className="order-2 grid gap-3 lg:order-1 lg:grid-cols-2">
             <Panel
               title="Home Value vs Total Paid"
               description="solid = appreciated value · dashed = cumulative cash out"
@@ -320,7 +322,7 @@ function Home() {
             </Panel>
           </div>
 
-          <div className="grid grid-cols-2 gap-2 sm:gap-3 lg:grid-cols-4">
+          <div className="order-3 grid grid-cols-2 gap-2 sm:gap-3 lg:order-2 lg:grid-cols-4">
             <Panel
               accent={focused.inputs.color}
               title={`Monthly payment · ${focused.inputs.name}`}
@@ -402,24 +404,88 @@ function Home() {
             </Panel>
           </div>
 
-          <div className="grid gap-3 lg:grid-cols-12">
+          <div className="order-1 grid gap-3 lg:order-3 lg:grid-cols-12">
             <Panel
               title="Parameters"
               description={`editing · ${fs.name}`}
               accent={focused.inputs.color}
               className="lg:col-span-5"
             >
-              <div className="grid grid-cols-1 gap-3.5 md:grid-cols-2">
-                <SliderField
+              <div className="grid grid-cols-2 gap-3 sm:gap-3.5">
+                <NumberField
                   label="Home price"
                   value={fs.homePrice}
-                  min={50000}
-                  max={3000000}
-                  step={5000}
-                  format={(v) => formatCurrency(v, { compact: true })}
+                  step={1000}
+                  min={0}
+                  prefix="$"
                   onChange={(v) => update(fs.id, { homePrice: v })}
                 />
+                <NumberField
+                  label="Interest rate"
+                  value={fs.interestRate}
+                  step={0.05}
+                  min={0}
+                  max={20}
+                  suffix="%"
+                  hint={
+                    fs.points > 0
+                      ? `eff ${(
+                          fs.interestRate -
+                          fs.points * fs.pointReductionPct
+                        ).toFixed(3)}%`
+                      : 'before points'
+                  }
+                  onChange={(v) => update(fs.id, { interestRate: v })}
+                />
+                <div className="flex flex-col gap-1">
+                  <Label>Loan term</Label>
+                  <Select
+                    value={String(fs.loanTermYears)}
+                    onValueChange={(v) => update(fs.id, { loanTermYears: Number(v) })}
+                  >
+                    <SelectTrigger>
+                      <SelectValue />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="10">10 years</SelectItem>
+                      <SelectItem value="15">15 years</SelectItem>
+                      <SelectItem value="20">20 years</SelectItem>
+                      <SelectItem value="25">25 years</SelectItem>
+                      <SelectItem value="30">30 years</SelectItem>
+                    </SelectContent>
+                  </Select>
+                </div>
+                <NumberField
+                  label="HOA / mo"
+                  value={fs.hoaMonthly}
+                  step={10}
+                  min={0}
+                  prefix="$"
+                  onChange={(v) => update(fs.id, { hoaMonthly: v })}
+                />
+                <NumberField
+                  label="HOI / yr"
+                  value={fs.homeInsuranceAnnual}
+                  step={50}
+                  min={0}
+                  prefix="$"
+                  hint={`${formatCurrency(fs.homeInsuranceAnnual / 12)}/mo`}
+                  onChange={(v) => update(fs.id, { homeInsuranceAnnual: v })}
+                />
+                <NumberField
+                  label="Property tax"
+                  value={fs.propertyTaxRate}
+                  step={0.01}
+                  min={0}
+                  max={5}
+                  suffix="%"
+                  hint={formatCurrency(fs.homePrice * (fs.propertyTaxRate / 100), {
+                    compact: true,
+                  })}
+                  onChange={(v) => update(fs.id, { propertyTaxRate: v })}
+                />
                 <SliderField
+                  className="col-span-2"
                   label="Down payment"
                   value={fs.downPaymentPct}
                   min={0}
@@ -432,24 +498,7 @@ function Home() {
                   onChange={(v) => update(fs.id, { downPaymentPct: v })}
                 />
                 <SliderField
-                  label="Interest rate"
-                  value={fs.interestRate}
-                  min={0}
-                  max={15}
-                  step={0.05}
-                  format={(v) => `${v.toFixed(2)}%`}
-                  onChange={(v) => update(fs.id, { interestRate: v })}
-                />
-                <SliderField
-                  label="Loan term"
-                  value={fs.loanTermYears}
-                  min={5}
-                  max={40}
-                  step={1}
-                  format={(v) => `${v} yr`}
-                  onChange={(v) => update(fs.id, { loanTermYears: v })}
-                />
-                <SliderField
+                  className="col-span-2"
                   label="Point buydowns"
                   value={fs.points}
                   min={0}
@@ -458,15 +507,17 @@ function Home() {
                   format={(v) => `${v.toFixed(2)} pts`}
                   hint={
                     fs.points > 0
-                      ? `eff ${(
-                          fs.interestRate -
-                          fs.points * fs.pointReductionPct
-                        ).toFixed(3)}%`
-                      : undefined
+                      ? `+${formatCurrency(
+                          (fs.homePrice - fs.homePrice * (fs.downPaymentPct / 100)) *
+                            (fs.points * fs.pointCostPct) / 100,
+                          { compact: true },
+                        )} at close`
+                      : 'no buydown'
                   }
                   onChange={(v) => update(fs.id, { points: v })}
                 />
                 <SliderField
+                  className="col-span-2"
                   label="Closing costs"
                   value={fs.closingCostsPct}
                   min={0}
@@ -479,26 +530,8 @@ function Home() {
                   onChange={(v) => update(fs.id, { closingCostsPct: v })}
                 />
                 <SliderField
-                  label="Property tax"
-                  value={fs.propertyTaxRate}
-                  min={0}
-                  max={4}
-                  step={0.05}
-                  format={(v) => `${v.toFixed(2)}%`}
-                  hint="annual / value"
-                  onChange={(v) => update(fs.id, { propertyTaxRate: v })}
-                />
-                <SliderField
-                  label="HOI (insurance)"
-                  value={fs.homeInsuranceAnnual}
-                  min={0}
-                  max={10000}
-                  step={50}
-                  format={(v) => `${formatCurrency(v / 12)}/mo`}
-                  onChange={(v) => update(fs.id, { homeInsuranceAnnual: v })}
-                />
-                <SliderField
-                  label="Maintenance %"
+                  className="col-span-2"
+                  label="Maintenance"
                   value={fs.maintenancePctAnnual}
                   min={0}
                   max={5}
@@ -508,7 +541,8 @@ function Home() {
                   onChange={(v) => update(fs.id, { maintenancePctAnnual: v })}
                 />
                 <SliderField
-                  label="Appreciation rate"
+                  className="col-span-2"
+                  label="Appreciation"
                   value={fs.appreciationPct}
                   min={-5}
                   max={12}
@@ -517,22 +551,13 @@ function Home() {
                   onChange={(v) => update(fs.id, { appreciationPct: v })}
                 />
                 <SliderField
-                  label="HOA / mo"
-                  value={fs.hoaMonthly}
-                  min={0}
-                  max={2000}
-                  step={10}
-                  format={(v) => formatCurrency(v)}
-                  onChange={(v) => update(fs.id, { hoaMonthly: v })}
-                />
-                <SliderField
-                  label="Monthly extra"
+                  className="col-span-2"
+                  label="Monthly extra to principal"
                   value={fs.monthlyExtra}
                   min={0}
                   max={3000}
                   step={25}
                   format={(v) => formatCurrency(v)}
-                  hint="to principal"
                   onChange={(v) => update(fs.id, { monthlyExtra: v })}
                 />
               </div>
@@ -565,7 +590,7 @@ function Home() {
             </Panel>
           </div>
 
-          <Tabs defaultValue="overview">
+          <Tabs defaultValue="overview" className="order-4">
             <TabsList>
               <TabsTrigger value="overview">over time</TabsTrigger>
               <TabsTrigger value="totals">totals</TabsTrigger>
@@ -644,7 +669,7 @@ function Home() {
             </TabsContent>
           </Tabs>
 
-          <footer className="pb-1 pt-2 text-center text-[10px] text-muted-foreground/60">
+          <footer className="order-5 pb-1 pt-2 text-center text-[10px] text-muted-foreground/60">
             Mortgage Lab · figures are estimates, not financial advice
           </footer>
         </main>

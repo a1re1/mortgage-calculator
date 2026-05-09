@@ -92,13 +92,13 @@ export function ScenarioWaterfall({
                 return (
                   <div key={r.inputs.id} className="flex items-center gap-2">
                     <div
-                      className="w-24 shrink-0 truncate text-[11px]"
+                      className="w-16 shrink-0 truncate text-[11px] sm:w-24"
                       style={{ color: r.inputs.color }}
                       title={r.inputs.name}
                     >
                       {r.inputs.name}
                     </div>
-                    <div className="relative h-4 flex-1">
+                    <div className="relative h-4 flex-1 min-w-0">
                       <div className="absolute inset-y-0 left-1/2 w-px bg-panel-border" />
                       <div
                         className="absolute inset-y-0.5 rounded-sm"
@@ -110,7 +110,7 @@ export function ScenarioWaterfall({
                       />
                     </div>
                     <div
-                      className="w-20 shrink-0 text-right font-mono text-[11px] font-semibold tabular-nums"
+                      className="w-16 shrink-0 text-right font-mono text-[11px] font-semibold tabular-nums sm:w-20"
                       style={{ color }}
                     >
                       {delta === 0 ? '—' : `${delta > 0 ? '+' : '−'}${m.format(Math.abs(delta))}`}

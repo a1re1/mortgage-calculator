@@ -23,15 +23,15 @@ export function BigStat({
   return (
     <div
       className={cn(
-        'flex h-full min-h-[120px] flex-col items-center justify-center px-3 py-4 text-center',
+        'flex h-full min-h-[88px] flex-col items-center justify-center px-2 py-3 text-center sm:min-h-[120px] sm:px-3 sm:py-4',
         className,
       )}
     >
-      <div className="mb-2 text-[10px] font-medium uppercase tracking-[0.14em] text-muted-foreground">
+      <div className="mb-1.5 text-[10px] font-medium uppercase tracking-[0.14em] text-muted-foreground sm:mb-2">
         {label}
       </div>
       <div
-        className="font-mono text-4xl font-light leading-none tabular-nums xl:text-5xl"
+        className="font-mono text-2xl font-light leading-none tabular-nums sm:text-3xl lg:text-4xl xl:text-5xl"
         style={color ? { color } : undefined}
       >
         {value}

@@ -41,18 +41,24 @@ export const Route = createFileRoute('/')({
   component: Home,
 })
 
+// Baseline mirrors the Chase preapproval (May 5 2026, ref MAX9058061):
+// $1.5M Cambridge condo · 20% down · 30yr fixed @ 5.625% with 2.15 points.
+// Modeled as base rate 6.1625% reduced 0.5375% by 2.15 points (default 0.25%/pt),
+// landing at the same 5.625% effective rate Chase quoted. Point cost ≈ $25,800.
 const initialPresets = (): ScenarioInputs[] => [
   defaultScenario({
-    name: '30yr Fixed · 7.0%',
+    name: 'Chase 30yr · 5.625% · 2.15pt',
     color: COLORS[0]!,
     loanTermYears: 30,
-    interestRate: 7.0,
+    interestRate: 6.1625,
+    points: 2.15,
   }),
   defaultScenario({
-    name: '15yr Fixed · 6.25%',
+    name: '30yr No Points · 6.16%',
     color: COLORS[1]!,
-    loanTermYears: 15,
-    interestRate: 6.25,
+    loanTermYears: 30,
+    interestRate: 6.1625,
+    points: 0,
   }),
 ]
 

@@ -299,6 +299,11 @@ export function simulateScenario(s: ScenarioInputs): ScenarioResult {
   }
 }
 
+// Defaults model a Cambridge, MA primary-residence condo purchase.
+// - Tax rate 0.36% reflects FY26 residential rate (~$5.86/$1,000) AFTER the
+//   Cambridge residential exemption for owner-occupied properties.
+// - Maintenance 0.5%/yr because condo HOA covers exterior + structure.
+// - Appreciation 4% is a long-run Cambridge midpoint.
 export function defaultScenario(
   overrides: Partial<ScenarioInputs> = {},
 ): ScenarioInputs {
@@ -307,21 +312,21 @@ export function defaultScenario(
     name: 'Baseline',
     color: 'var(--color-chart-1)',
     visible: true,
-    homePrice: 500000,
-    appreciationPct: 3.5,
-    inflationPct: 2.5,
+    homePrice: 1_500_000,
+    appreciationPct: 4.0,
+    inflationPct: 3.0,
     downPaymentPct: 20,
     loanTermYears: 30,
-    interestRate: 7.0,
+    interestRate: 6.1625,
     points: 0,
     pointCostPct: 1.0,
     pointReductionPct: 0.25,
-    closingCostsPct: 3.0,
+    closingCostsPct: 2.5,
     pmiRate: 0.5,
-    propertyTaxRate: 1.2,
-    homeInsuranceAnnual: 1800,
-    hoaMonthly: 0,
-    maintenancePctAnnual: 1.0,
+    propertyTaxRate: 0.36,
+    homeInsuranceAnnual: 900,
+    hoaMonthly: 650,
+    maintenancePctAnnual: 0.5,
     monthlyExtra: 0,
     extraPayments: [],
     refinances: [],

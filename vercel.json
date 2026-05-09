@@ -4,6 +4,7 @@
   "installCommand": "bun install",
   "outputDirectory": "dist/client",
   "framework": null,
+  "cleanUrls": true,
   "rewrites": [
     { "source": "/(.*)", "destination": "/index.html" }
   ]

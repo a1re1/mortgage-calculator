@@ -41,24 +41,36 @@ export const Route = createFileRoute('/')({
   component: Home,
 })
 
-// Baseline mirrors the Chase preapproval (May 5 2026, ref MAX9058061):
-// $1.5M Cambridge condo · 20% down · 30yr fixed @ 5.625% with 2.15 points.
-// Modeled as base rate 6.1625% reduced 0.5375% by 2.15 points (default 0.25%/pt),
-// landing at the same 5.625% effective rate Chase quoted. Point cost ≈ $25,800.
+// Two scenarios out of the box:
+// 1. Chase preapproval (May 5 2026, ref MAX9058061) — max stretch at $1.5M,
+//    30yr fixed @ 5.625% with 2.15 points. Modeled as base 6.1625% reduced
+//    0.5375% by 2.15 points (default 0.25%/pt), landing on Chase's 5.625%
+//    effective rate. Point cost ≈ $25,800.
+// 2. 118 Pearl St #2, Cambridge — actual target at $1,294,000. Same Chase
+//    loan terms applied. Real listing numbers: HOA $461/mo (water, sewer,
+//    master ins, snow, reserves), property tax $4,179/yr → 0.32% of price,
+//    HO-6 personal policy ~$500/yr (master is in HOA), 0.6% maintenance
+//    (1874 build, duplex condo, exterior covered by HOA).
 const initialPresets = (): ScenarioInputs[] => [
   defaultScenario({
-    name: 'Chase 30yr · 5.625% · 2.15pt',
+    name: 'Chase preapproval · $1.5M',
     color: COLORS[0]!,
+    homePrice: 1_500_000,
     loanTermYears: 30,
     interestRate: 6.1625,
     points: 2.15,
   }),
   defaultScenario({
-    name: '30yr No Points · 6.16%',
+    name: '118 Pearl St · $1.294M',
     color: COLORS[1]!,
+    homePrice: 1_294_000,
     loanTermYears: 30,
     interestRate: 6.1625,
-    points: 0,
+    points: 2.15,
+    propertyTaxRate: 0.32,
+    homeInsuranceAnnual: 500,
+    hoaMonthly: 461,
+    maintenancePctAnnual: 0.6,
   }),
 ]
 
